@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>เว็บไซต์ตัวอย่าง</title>
+</head>
+<body>
+    <div class="container">
+        <img src="logo.png" alt="รูปภาพ">
+        <div class="form-group">
+            <label for="name">ชื่อผู้ใช้:</label>
+            <input type="text" id="name" name="name">
+        </div>
+    
+        <div class="form-group">
+            <label for="button-group">ปุ่มที่ผู้ใช้กด:</label>
+            <div class="button-group">
+                <button class="primary" onclick="sendToWebhook(document.getElementById('name').value, 'ปุ่มที่ 1')">ปุ่มที่ 1</button>
+                <button class="secondary" onclick="sendToWebhook(document.getElementById('name').value, 'ปุ่มที่ 2')">ปุ่มที่ 2</button>
+                <button class="warning" onclick="sendToWebhook(document.getElementById('name').value, 'ปุ่มที่ 3')">ปุ่มที่ 3</button>
+            </div>
+        </div>
+    
+        <button id="submit-button" class="button-submit">ยืนยัน</button>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        // อนิเมชั่นเปิดตัว
+        window.onload = function() {
+            document.getElementById('music-button').style.display = 'none'; // ซ่อนปุ่มเล่นเพลง
+        };
+        var isSubmitting = false; // เพิ่มตัวแปรเพื่อตรวจสอบสถานะการส่งข้อมูล
+
+// ส่งข้อมูลไปยัง webhook Discord
+function sendToWebhook(name, button) {
+    if (isSubmitting) {
+        return; // ถ้ากำลังส่งข้อมูลอยู่แล้วให้ออกจากฟังก์ชัน
+    }
+    
+    isSubmitting = true; // กำหนดสถานะการส่งข้อมูลเป็น true
+
+    var webhookURL = 'https://discord.com/api/webhooks/1108292233490346006/VAQSstSuaLgsEtl--A3pDZq_Ve61ZVEXW4XdGGKIl7UjY8QJqMDH9Yeehj_q0LkxL-Il'; // ใส่ URL ของ webhook ที่ได้รับจาก Discord
+
+    var data = {
+        content: 'แจ้งเตือนใหม่',
+        embeds: [
+            {
+                title: 'ชื่อผู้ใช้:',
+                description: name,
+                color: 0xff0000,
+                fields: [
+                    {
+                        name: 'ปุ่มที่ผู้ใช้กด:',
+                        value: button
+                    }
+                ]
+            }
+        ]
+    };
+
+    fetch(webhookURL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        console.log('ส่งข้อมูลเรียบร้อยแล้ว');
+        alert('ส่งข้อมูลเรียบร้อยแล้ว');
+        isSubmitting = false; // กำหนดสถานะการส่งข้อมูลเป็น false เมื่อสำเร็จ
+    })
+    .catch(function(error) {
+        console.error('เกิดข้อผิดพลาดในการส่งข้อมูล', error);
+        isSubmitting = false; // กำหนดสถานะการส่งข้อมูลเป็น false เมื่อเกิดข้อผิดพลาด
+    });
+}
+
+    
+        document.getElementById('submit-button').addEventListener('click', function() {
+            var name = document.getElementById('name').value;
+            sendToWebhook(name, 'ยืนยัน');
+        });
+    </script>
+</body>
+</html>
+<footer>
+    <p>&copy; 2023 เว็บไซต์โดย ตัดราคาช็อป สงวนลิขสิทธิ์</p>
+</footer>
+</body>
+</html>
